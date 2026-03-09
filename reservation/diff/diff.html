@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura Bay Resort | Tropical Paradise</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="diff.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <a href="#" class="logo">
+            <i class="fas fa-leaf"></i>
+            Aura Bay
+        </a>
+        <ul class="nav-links">
+            <li><a onclick="scrollToSection('rooms')">Rooms</a></li>
+            <li><a onclick="scrollToSection('services')">Services</a></li>
+            <li><a onclick="scrollToSection('about')">About</a></li>
+            <li><a onclick="scrollToSection('contact')">Contact</a></li>
+            <li>
+                <a class="login-btn" onclick="openLoginModal()" id="loginNavBtn">Login</a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- User Dashboard -->
+    <div class="user-dashboard" id="userDashboard">
+        <div class="user-info">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="user-details">
+                <h4>Welcome back!</h4>
+                <p id="userDisplayName">user123<br>dummygates123@gmail.com</p>
+            </div>
+        </div>
+
+        <ul class="dashboard-menu">
+            <li onclick="showReservations()"><i class="fas fa-calendar-check"></i> My Reservations</li>
+            <li onclick="openProfile()"><i class="fas fa-user-circle"></i> Profile</li>
+            <li onclick="openServiceModal()"><i class="fas fa-spa"></i> Book Service</li>
+            <li class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</li>
+        </ul>
+        
+        <div class="reservations-list" id="reservationsList" style="display: none;">
+            <h4 style="margin-bottom: 15px; color: var(--dark); font-size: 16px;">Your Bookings</h4>
+            <div id="bookingsContainer"></div>
+        </div>
+    </div>
+
+    <!-- Confirmation Popup -->
+    <div class="overlay" id="confirmationOverlay"></div>
+    <div class="confirmation-popup" id="confirmationPopup">
+        <div class="icon">
+            <i class="fas fa-check"></i>
+        </div>
+        <h3>Booking Confirmed!</h3>
+        <p id="confirmationText">Your reservation has been successfully confirmed.</p>
+        <button class="btn" onclick="closeConfirmation()">Awesome!</button>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Welcome to Paradise</h1>
+            <p>Experience luxury in the heart of the tropics</p>
+            <button class="cta-button" onclick="scrollToSection('rooms')">Explore Rooms</button>
+        </div>
+    </section>
+
+    <!-- Rooms Section - 6 Rooms -->
+    <section id="rooms">
+        <div class="section-header">
+            <h2>Luxury Accommodations</h2>
+            <p>Choose from our selection of 6 premium tropical suites</p>
+        </div>
+        
+        <div class="rooms-grid">
+            <!-- Room 1 -->
+            <div class="room-card" data-room-id="1" onclick="handleRoomClick('Ocean View Suite', 450, 1)">
+                <div class="room-image" style="background-image: url('https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800')">
+                    <span class="room-badge">Popular</span>
+                </div>
+                <div class="room-info">
+                    <h3>Ocean View Suite</h3>
+                    <p>Wake up to breathtaking panoramic views of the crystal-clear ocean from your private balcony.</p>
+                    <div class="room-features">
+                        <span><i class="fas fa-bed"></i> King Bed</span>
+                        <span><i class="fas fa-expand"></i> 65 m²</span>
+                        <span><i class="fas fa-water"></i> Ocean View</span>
+                    </div>
+                    <div class="room-price">
+                        <div class="price">$450<span>/night</span></div>
+                        <button class="book-btn">Book Now</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Room 2 -->
+            <div class="room-card" data-room-id="2" onclick="handleRoomClick('Garden Villa', 380, 2)">
+                <div class="room-image" style="background-image: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800')">
+                    <span class="room-badge">New</span>
+                </div>
+                <div class="room-info">
+                    <h3>Garden Villa</h3>
+                    <p>Immerse yourself in lush tropical gardens with a private plunge pool and outdoor shower.</p>
+                    <div class="room-features">
+                        <span><i class="fas fa-bed"></i> Queen Bed</span>
+                        <span><i class="fas fa-expand"></i> 80 m²</span>
+                        <span><i class="fas fa-swimming-pool"></i> Private Pool</span>
+                    </div>
+                    <div class="room-price">
+                        <div class="price">$380<span>/night</span></div>
+                        <button class="book-btn">Book Now</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Room 3 -->
+            <div class="room-card" data-room-id="3" onclick="handleRoomClick('Beachfront Bungalow', 550, 3)">
+                <div class="room-image" style="background-image: url('https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800')">
+                    <span class="room-badge">Premium</span>
+                </div>
+                <div class="room-info">
+                    <h3>Beachfront Bungalow</h3>
+                    <p>Step directly onto the white sand beach from your private terrace with uninterrupted sea views.</p>
+                    <div class="room-features">
+                        <span><i class="fas fa-bed"></i> King Bed</span>
+                        <span><i class="fas fa-expand"></i> 95 m²</span>
+                        <span><i class="fas fa-umbrella-beach"></i> Beach Access</span>
+                    </div>
+                    <div class="room-price">
+                        <div class="price">$550<span>/night</span></div>
+                        <button class="book-btn">Book Now</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Room 4 -->
+            <div class="room-card" data-room-id="4" onclick="handleRoomClick('Rainforest Retreat', 320, 4)">
+                <div class="room-image" style="background-image: url('https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=800')">
+                    <span class="room-badge">Eco</span>
+                </div>
+                <div class="room-info">
+                    <h3>Rainforest Retreat</h3>
+                    <p>Surrounded by lush jungle canopy with glass walls bringing nature right into your living space.</p>
+                    <div class="room-features">
+                        <span><i class="fas fa-bed"></i> Queen Bed</span>
+                        <span><i class="fas fa-expand"></i> 55 m²</span>
+                        <span><i class="fas fa-leaf"></i> Jungle View</span>
+                    </div>
+                    <div class="room-price">
+                        <div class="price">$320<span>/night</span></div>
+                        <button class="book-btn">Book Now</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Room 5 -->
+            <div class="room-card" data-room-id="5" onclick="handleRoomClick('Presidential Pavilion', 850, 5)">
+                <div class="room-image" style="background-image: url('https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800')">
+                    <span class="room-badge">Luxury</span>
+                </div>
+                <div class="room-info">
+                    <h3>Presidential Pavilion</h3>
+                    <p>Ultimate luxury with separate living areas, infinity pool, and dedicated butler service.</p>
+                    <div class="room-features">
+                        <span><i class="fas fa-bed"></i> 2 King Beds</span>
+                        <span><i class="fas fa-expand"></i> 200 m²</span>
+                        <span><i class="fas fa-concierge-bell"></i> Butler</span>
+                    </div>
+                    <div class="room-price">
+                        <div class="price">$850<span>/night</span></div>
+                        <button class="book-btn">Book Now</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Room 6 -->
+            <div class="room-card" data-room-id="6" onclick="handleRoomClick('Overwater Villa', 680, 6)">
+                <div class="room-image" style="background-image: url('https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=800')">
+                    <span class="room-badge">Unique</span>
+                </div>
+                <div class="room-info">
+                    <h3>Overwater Villa</h3>
+                    <p>Stilted above the turquoise lagoon with glass floor panels and direct water access.</p>
+                    <div class="room-features">
+                        <span><i class="fas fa-bed"></i> King Bed</span>
+                        <span><i class="fas fa-expand"></i> 110 m²</span>
+                        <span><i class="fas fa-water"></i> Lagoon Access</span>
+                    </div>
+                    <div class="room-price">
+                        <div class="price">$680<span>/night</span></div>
+                        <button class="book-btn">Book Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section - 6 Services -->
+    <section id="services" class="services">
+        <div class="section-header">
+            <h2>Resort Services</h2>
+            <p>Enhance your stay with our 6 world-class amenities</p>
+        </div>
+        
+        <div class="services-grid">
+            <!-- Service 1 -->
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-spa"></i>
+                </div>
+                <h3>Tropical Spa</h3>
+                <p>Rejuvenate with traditional massages and modern treatments using organic local ingredients in our open-air pavilion.</p>
+                <div class="service-price">From $120</div>
+                <button class="book-btn" onclick="handleServiceClick('Tropical Spa')">Book Service</button>
+            </div>
+
+            <!-- Service 2 -->
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <h3>Private Dining</h3>
+                <p>Romantic beachfront dinner prepared by our executive chef with personalized menu options and wine pairing.</p>
+                <div class="service-price">From $200</div>
+                <button class="book-btn" onclick="handleServiceClick('Private Dining')">Book Service</button>
+            </div>
+
+            <!-- Service 3 -->
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-water"></i>
+                </div>
+                <h3>Sunset Cruise</h3>
+                <p>Private yacht tour along the coast with champagne, canapés, and snorkeling as the sun sets over the horizon.</p>
+                <div class="service-price">From $350</div>
+                <button class="book-btn" onclick="handleServiceClick('Sunset Cruise')">Book Service</button>
+            </div>
+
+            <!-- Service 4 -->
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-hiking"></i>
+                </div>
+                <h3>Jungle Expedition</h3>
+                <p>Guided trek through tropical rainforest with waterfall swimming, wildlife spotting, and picnic lunch included.</p>
+                <div class="service-price">From $85</div>
+                <button class="book-btn" onclick="handleServiceClick('Jungle Expedition')">Book Service</button>
+            </div>
+
+            <!-- Service 5 -->
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-fish"></i>
+                </div>
+                <h3>Deep Sea Fishing</h3>
+                <p>Full-day charter with professional guides, all equipment provided, and chef-prepared catch-of-the-day dinner.</p>
+                <div class="service-price">From $450</div>
+                <button class="book-btn" onclick="handleServiceClick('Deep Sea Fishing')">Book Service</button>
+            </div>
+
+            <!-- Service 6 -->
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-helicopter"></i>
+                </div>
+                <h3>Island Helicopter Tour</h3>
+                <p>Breathtaking aerial views of the archipelago, volcanic peaks, and hidden lagoons with champagne toast.</p>
+                <div class="service-price">From $580</div>
+                <button class="book-btn" onclick="handleServiceClick('Island Helicopter Tour')">Book Service</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+        <div class="section-header">
+            <h2>About Aura Bay</h2>
+            <p>Your sanctuary in the tropics</p>
+        </div>
+        <div class="about-content">
+            <p style="text-align: center; max-width: 800px; margin: 0 auto; line-height: 1.8; color: #666; font-size: 18px;">
+                Nestled on the pristine shores of a private island, Aura Bay Resort offers an unparalleled luxury experience. 
+                Our commitment to sustainable tourism and authentic local culture creates a harmonious blend of modern comfort 
+                and natural beauty. Whether you seek adventure in our lush rainforests or tranquility on our white sand beaches, 
+                every moment at Aura Bay is designed to rejuvenate your spirit.
+            </p>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <div class="section-header">
+            <h2>Contact Us</h2>
+            <p>Get in touch for inquiries and special requests</p>
+        </div>
+        <div class="contact-content" style="text-align: center; max-width: 600px; margin: 0 auto;">
+            <p style="color: #666; margin-bottom: 30px;">
+                <i class="fas fa-map-marker-alt" style="color: var(--primary); margin-right: 10px;"></i>
+                123 Paradise Lane, Tropical Island, Pacific Ocean<br>
+                <i class="fas fa-phone" style="color: var(--primary); margin-right: 10px;"></i>
+                +1 (555) 123-4567<br>
+                <i class="fas fa-envelope" style="color: var(--primary); margin-right: 10px;"></i>
+                info@aurabay.com
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4><i class="fas fa-leaf"></i> Aura Bay Resort</h4>
+                <p>Your tropical paradise awaits. Experience luxury, nature, and tranquility in perfect harmony.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a onclick="scrollToSection('rooms')">Rooms & Suites</a></li>
+                    <li><a onclick="scrollToSection('services')">Services</a></li>
+                    <li><a onclick="scrollToSection('about')">About Us</a></li>
+                    <li><a onclick="scrollToSection('contact')">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Connect With Us</h4>
+                <div class="social-icons">
+                    <a href="https://instagram.com" target="_blank" class="social-icon instagram" title="Follow us on Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://facebook.com" target="_blank" class="social-icon facebook" title="Like us on Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="mailto:contact@aurabay.com" class="social-icon gmail" title="Email us">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Aura Bay Resort. All rights reserved. | Designed with <i class="fas fa-heart" style="color: var(--accent);"></i> in Paradise</p>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('loginModal')"><i class="fas fa-times"></i></button>
+            <h2>Welcome Back</h2>
+            <p class="modal-subtitle">Login to manage your reservations</p>
+            <div class="success-msg" id="loginSuccess">Login successful! Welcome to Aura Bay.</div>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="username" placeholder="Enter username" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" placeholder="Enter email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password" placeholder="Enter password" required>
+                </div>
+                <p class="error-msg" id="loginError">Invalid credentials. Try user123 / password123</p>
+                <button type="submit" class="submit-btn">Login</button>
+            </form>
+            <p style="text-align: center; margin-top: 20px; color: #666; font-size: 14px;">
+                Demo: user123 / password123
+            </p>
+        </div>
+    </div>
+
+    <!-- Enhanced Room Booking Modal -->
+    <div class="modal" id="bookingModal">
+        <div class="modal-content booking-modal-content">
+            <button class="close-modal" onclick="closeModal('bookingModal')"><i class="fas fa-times"></i></button>
+            
+            <!-- Room Details Header -->
+            <div class="room-details-header">
+                <div class="room-details-image" id="bookingModalImage"></div>
+                <div class="room-details-info">
+                    <span class="room-details-badge" id="bookingModalBadge">Popular</span>
+                    <h2 id="bookingRoomName">Ocean View Suite</h2>
+                    <div class="room-details-price" id="bookingModalPrice">$450<span>/night</span></div>
+                </div>
+            </div>
+
+            <!-- Room Amenities & Highlights -->
+            <div class="room-details-section">
+                <h3><i class="fas fa-star"></i> Room Highlights</h3>
+                <div class="highlights-grid" id="roomHighlights">
+                    <!-- Dynamically populated -->
+                </div>
+            </div>
+
+            <div class="room-details-section">
+                <h3><i class="fas fa-concierge-bell"></i> Included Amenities</h3>
+                <div class="amenities-list" id="roomAmenities">
+                    <!-- Dynamically populated -->
+                </div>
+            </div>
+
+            <div class="room-details-section">
+                <h3><i class="fas fa-gift"></i> Exclusive Privileges</h3>
+                <ul class="privileges-list" id="roomPrivileges">
+                    <!-- Dynamically populated -->
+                </ul>
+            </div>
+
+            <!-- Booking Form -->
+            <div class="booking-form-section">
+                <h3><i class="fas fa-calendar-alt"></i> Book Your Stay</h3>
+                <div class="success-msg" id="bookingSuccess">
+                    <i class="fas fa-check-circle"></i> Booking request submitted successfully!
+                </div>
+                <form onsubmit="handleRoomBooking(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Check In Date</label>
+                            <input type="date" id="modalCheckIn" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Check Out Date</label>
+                            <input type="date" id="modalCheckOut" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Number of Guests</label>
+                        <select id="modalGuests" required>
+                            <option value="1">1 Guest</option>
+                            <option value="2" selected>2 Guests</option>
+                            <option value="3">3 Guests</option>
+                            <option value="4">4 Guests</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Special Requests</label>
+                        <textarea rows="3" placeholder="Any special requirements (e.g., honeymoon setup, extra bed, dietary restrictions)..."></textarea>
+                    </div>
+                    <div class="price-calculation">
+                        <div class="price-row">
+                            <span>Rate per night:</span>
+                            <span id="nightRate">$450</span>
+                        </div>
+                        <div class="price-row">
+                            <span>Number of nights:</span>
+                            <span id="numNights">1</span>
+                        </div>
+                        <div class="price-row total">
+                            <span>Total Estimate:</span>
+                            <span id="totalEstimate">$450</span>
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-calendar-check"></i> Confirm Booking
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Service Booking Modal -->
+    <div class="modal" id="serviceModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('serviceModal')"><i class="fas fa-times"></i></button>
+            <h2>Book Service</h2>
+            <p class="modal-subtitle" id="serviceName">Tropical Spa</p>
+            <div class="success-msg" id="serviceSuccess">
+                <i class="fas fa-check-circle"></i> Service booking request submitted successfully!
+            </div>
+            <form onsubmit="handleServiceBooking(event)">
+                <div class="form-group">
+                    <label>Preferred Date</label>
+                    <input type="date" id="serviceDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Preferred Time</label>
+                    <select id="serviceTime" required>
+                        <option value="09:00">09:00 AM</option>
+                        <option value="11:00">11:00 AM</option>
+                        <option value="14:00">02:00 PM</option>
+                        <option value="16:00">04:00 PM</option>
+                        <option value="18:00">06:00 PM</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Number of People</label>
+                    <select id="servicePeople" required>
+                        <option value="1">1 Person</option>
+                        <option value="2">2 People</option>
+                        <option value="3">3 People</option>
+                        <option value="4">4 People</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Additional Notes</label>
+                    <textarea rows="3" placeholder="Any preferences or requirements..."></textarea>
+                </div>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-calendar-check"></i> Confirm Booking
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

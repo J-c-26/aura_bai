@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura Bay Resort | My History</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #2D5A4A; --accent: #FF6B6B; --light: #F7F5F0; --dark: #1A3A2F; --secondary: #E8B86D; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--light); padding: 40px; color: var(--dark); margin: 0; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h2 { font-family: 'Playfair Display', serif; font-size: 36px; margin-bottom: 30px; border-bottom: 2px solid var(--primary); display: inline-block; padding-bottom: 10px; }
+        
+        .card { background: white; padding: 35px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.06); margin-bottom: 40px; }
+        .active-grid { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+        .active-info h3 { margin: 0 0 10px 0; color: var(--primary); font-size: 24px; }
+        .active-info p { margin: 5px 0; color: #666; font-size: 14px; }
+        
+        .timer-container { text-align: center; background: var(--light); padding: 15px 25px; border-radius: 15px; border: 1px solid #e0e0e0; }
+        .timer-container label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #888; display: block; margin-bottom: 5px; }
+        .timer { font-size: 32px; font-weight: 700; color: var(--dark); font-family: monospace; }
+        
+        .btn-actions { display: flex; gap: 15px; }
+        .btn-extend { background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+        .btn-extend:hover { background: #1e4538; transform: translateY(-2px); }
+        .btn-end { background: var(--accent); color: white; border: none; padding: 12px 30px; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+        .btn-end:hover { background: #d32f2f; transform: translateY(-2px); }
+        
+        .upcoming-badge { 
+            display: inline-block; 
+            background: var(--secondary); 
+            color: var(--dark); 
+            padding: 6px 14px; 
+            border-radius: 30px; 
+            font-size: 11px; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+            margin-top: 10px;
+        }
+        
+        .countdown-to-checkin {
+            background: #fff8e1;
+            border: 2px solid var(--secondary);
+        }
+        
+        .history-table-container { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.03); }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 20px; background: #fdfdfd; border-bottom: 2px solid #f0f0f0; color: #888; font-size: 12px; text-transform: uppercase; }
+        td { padding: 20px; border-bottom: 1px solid #f9f9f9; font-size: 14px; }
+        
+        .status { padding: 6px 14px; border-radius: 30px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .status-pending { background: #fff8e1; color: #ff8f00; }
+        .status-confirmed { background: #e8f5e9; color: #2e7d32; }
+        .status-staying { background: #e0f7fa; color: #00838f; border: 1px solid #00838f; }
+        .status-cancelled { background: #ffebee; color: #c62828; }
+        .status-done { background: #f5f5f5; color: #757575; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; backdrop-filter: blur(3px); }
+        .modal-content { background: white; width: 450px; margin: 100px auto; padding: 40px; border-radius: 25px; position: relative; }
+        .modal-content h3 { margin-top: 0; font-family: 'Playfair Display', serif; }
+        .modal-content label { display: block; margin: 20px 0 10px; font-weight: 600; font-size: 14px; }
+        .modal-content input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-family: inherit; }
+        .btn-confirm-ext { background: var(--primary); color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; margin-top: 25px; cursor: pointer; font-weight: 600; }
+        .btn-confirm-ext:hover { background: #1e4538; }
+        
+        .loading { text-align: center; padding: 40px; color: #999; }
+        .loading i { animation: spin 1s linear infinite; margin-right: 10px; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Reservation History</h2>
+
+    <div id="activeStaySection" class="card" style="display: none;">
+        <div class="active-grid">
+            <div class="active-info">
+                <p id="statusLabel" style="text-transform: uppercase; font-size: 11px; font-weight: 700; color: var(--accent); margin-bottom: 5px;">Current Status</p>
+                <h3 id="activeRoomName">Room Name</h3>
+                <p><i class="fas fa-calendar-alt"></i> <span id="activeCheckIn"></span> &mdash; <span id="activeCheckOut"></span></p>
+                <div id="activeStatusBadge" class="status">CONFIRMED</div>
+            </div>
+            <div id="timerBox" class="timer-container" style="display: none;">
+                <label id="timerLabel">Time Remaining</label>
+                <div class="timer" id="countdownTimer">00:00:00</div>
+            </div>
+            <div id="countdownToCheckinBox" class="timer-container countdown-to-checkin" style="display: none;">
+                <label>Check-in begins in</label>
+                <div class="timer" id="countdownToCheckin">00:00:00</div>
+            </div>
+            <div class="btn-group">
+                <button class="btn-extend" onclick="openExtendModal()" title="Extend your current reservation">
+                    <i class="fas fa-plus"></i> Extend Stay
+                </button>
+                <button class="btn-end" onclick="confirmEndStay()" title="End your reservation early">
+                    <i class="fas fa-sign-out-alt"></i> End Stay
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="history-table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Room Type</th>
+                    <th>Price</th>
+                    <th>Check-in</th>
+                    <th>Check-out</th>
+                    <th>Reserved On</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="historyTableBody">
+                <tr><td colspan="6" class="loading"><i class="fas fa-spinner"></i> Loading reservations...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="extendModal" class="modal">
+    <div class="modal-content">
+        <h3>Extend Your Stay</h3>
+        <p style="font-size: 13px; color: #666; margin-bottom: 20px;">
+            Current room: <strong id="extendRoomName" style="color: var(--primary);"></strong>
+        </p>
+        <label>New Check-out Date & Time</label>
+        <input type="datetime-local" id="newCheckOutTime">
+        <p style="font-size: 12px; color: #888; margin-top: 10px;">
+            <i class="fas fa-info-circle"></i> This will extend your current reservation for the same room.
+        </p>
+        <button class="btn-confirm-ext" onclick="processExtension()">Update Reservation</button>
+        <button onclick="closeExtendModal()" style="background:none; border:none; color:#888; width:100%; margin-top:15px; cursor:pointer;">Cancel</button>
+    </div>
+</div>
+
+<script>
+    let timerRef = null;
+    let checkinTimerRef = null;
+    let currentReservation = null;
+
+    async function loadData() {
+        try {
+            const response = await fetch('status_check.php');
+            const data = await response.json();
+            renderPage(data);
+        } catch (err) {
+            console.error("Data Load Error:", err);
+            renderPage({
+                currentReservation: null,
+                currentStatus: 'None',
+                history: []
+            });
+        }
+    }
+
+    function calculateStatus(checkIn, checkOut, dbStatus) {
+        const now = new Date();
+        const checkInDate = new Date(checkIn);
+        const checkOutDate = new Date(checkOut);
+        
+        // If already done/cancelled, keep that status
+        if (dbStatus === 'Done' || dbStatus === 'Cancelled') {
+            return dbStatus;
+        }
+        
+        // Calculate actual status based on time
+        if (now >= checkOutDate) {
+            return 'Done';
+        } else if (now >= checkInDate) {
+            return 'Staying';
+        } else {
+            return 'Confirmed'; 
+        }
+    }
+
+    function renderPage(data) {
+        const now = new Date();
+        
+        const activeCard = document.getElementById('activeStaySection');
+        const activeStatusBadge = document.getElementById('activeStatusBadge');
+        const statusLabel = document.getElementById('statusLabel');
+        const timerBox = document.getElementById('timerBox');
+        const countdownToCheckinBox = document.getElementById('countdownToCheckinBox');
+        
+        if (timerRef) clearInterval(timerRef);
+        if (checkinTimerRef) clearInterval(checkinTimerRef);
+        
+        if (data.currentReservation && ['Confirmed', 'Staying', 'Pending'].includes(data.currentStatus)) {
+            currentReservation = data.currentReservation;
+            activeCard.style.display = 'block';
+            
+            document.getElementById('activeRoomName').innerText = data.currentReservation.room_name;
+            document.getElementById('activeCheckIn').innerText = formatDate(data.currentReservation.check_in);
+            document.getElementById('activeCheckOut').innerText = formatDate(data.currentReservation.check_out);
+            
+            const checkInDate = new Date(data.currentReservation.check_in);
+            const checkOutDate = new Date(data.currentReservation.check_out);
+            
+            const actualStatus = calculateStatus(
+                data.currentReservation.check_in, 
+                data.currentReservation.check_out, 
+                data.currentStatus
+            );
+            
+            const hasCheckInStarted = now >= checkInDate;
+            const hasCheckOutPassed = now >= checkOutDate;
+            
+            if (hasCheckOutPassed) {
+                activeStatusBadge.className = 'status status-done';
+                activeStatusBadge.innerText = 'COMPLETED';
+                statusLabel.innerText = 'Past Stay';
+                statusLabel.style.color = '#757575';
+                timerBox.style.display = 'none';
+                countdownToCheckinBox.style.display = 'none';
+            } else if (hasCheckInStarted) {
+                activeStatusBadge.className = 'status status-staying';
+                activeStatusBadge.innerText = 'STAYING';
+                statusLabel.innerText = 'Currently Staying';
+                statusLabel.style.color = 'var(--accent)';
+                
+                timerBox.style.display = 'block';
+                countdownToCheckinBox.style.display = 'none';
+                
+                startCheckoutTimer(checkOutDate);
+            } else {
+                activeStatusBadge.className = 'status status-confirmed';
+                activeStatusBadge.innerText = 'CONFIRMED';
+                statusLabel.innerText = 'Upcoming Stay';
+                statusLabel.style.color = 'var(--secondary)';
+                
+                timerBox.style.display = 'none';
+                countdownToCheckinBox.style.display = 'block';
+                
+                startCheckinCountdown(checkInDate, checkOutDate);
+            }
+        } else {
+            activeCard.style.display = 'none';
+        }
+
+        const tbody = document.getElementById('historyTableBody');
+        tbody.innerHTML = '';
+        
+        if (!data.history || data.history.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color:#999;">No reservations found</td></tr>';
+        } else {
+            data.history.forEach(row => {
+                const actualStatus = calculateStatus(row.check_in, row.check_out, row.status);
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${row.room_name}</strong></td>
+                    <td>${row.price}</td>
+                    <td>${formatDate(row.check_in)}</td>
+                    <td>${formatDate(row.check_out)}</td>
+                    <td style="color:#999;">${row.created_at}</td>
+                    <td><span class="status status-${actualStatus.toLowerCase()}">${actualStatus}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+    }
+
+    function formatDate(dateStr) {
+        if (!dateStr) return '-';
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric', 
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    function startCheckoutTimer(checkOutDate) {
+        updateCheckoutTimer(checkOutDate);
+        timerRef = setInterval(() => updateCheckoutTimer(checkOutDate), 1000);
+    }
+
+    function updateCheckoutTimer(checkOutDate) {
+        const now = new Date().getTime();
+        const target = checkOutDate.getTime();
+        const diff = target - now;
+
+        if (diff <= 0) {
+            clearInterval(timerRef);
+            document.getElementById('countdownTimer').innerText = "00:00:00";
+            loadData();
+            return;
+        }
+
+        const h = Math.floor(diff / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById('countdownTimer').innerText = 
+            `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
+
+    function startCheckinCountdown(checkInDate, checkOutDate) {
+        updateCheckinTimer(checkInDate, checkOutDate); 
+        checkinTimerRef = setInterval(() => updateCheckinTimer(checkInDate, checkOutDate), 1000);
+    }
+
+    function updateCheckinTimer(checkInDate, checkOutDate) {
+        const now = new Date().getTime();
+        const target = checkInDate.getTime();
+        const diff = target - now;
+
+        if (diff <= 0) {
+            clearInterval(checkinTimerRef);
+            loadData(); 
+            return;
+        }
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+        let timeText = '';
+        if (days > 0) {
+            timeText = `${days}d ${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        } else {
+            timeText = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+        document.getElementById('countdownToCheckin').innerText = timeText;
+    }
+
+    async function confirmEndStay() {
+        if (confirm("Are you sure you want to end your reservation immediately? This will mark your stay as 'Done'.")) {
+            try {
+                await fetch('checkout.php');
+            } catch (e) {
+                console.log("Checkout endpoint not available (demo mode)");
+            }
+            loadData();
+        }
+    }
+
+    function openExtendModal() { 
+        if (!currentReservation) return;
+        
+        // Show current room name in modal
+        document.getElementById('extendRoomName').innerText = currentReservation.room_name;
+        
+        // Set minimum date to current check-out time
+        const currentCheckOut = new Date(currentReservation.check_out);
+        // Format for datetime-local: YYYY-MM-DDTHH:MM
+        const minDate = new Date(currentCheckOut.getTime() - (currentCheckOut.getTimezoneOffset() * 60000))
+            .toISOString().slice(0, 16);
+        document.getElementById('newCheckOutTime').min = minDate;
+        
+        document.getElementById('extendModal').style.display = 'block'; 
+    }
+    
+    function closeExtendModal() { 
+        document.getElementById('extendModal').style.display = 'none'; 
+    }
+
+    async function processExtension() {
+        const newTime = document.getElementById('newCheckOutTime').value;
+        if (!newTime) return alert("Please select a new check-out time.");
+        
+        const newCheckOut = new Date(newTime);
+        const currentCheckOut = new Date(currentReservation.check_out);
+        
+        if (newCheckOut <= currentCheckOut) {
+            return alert("New check-out time must be after current check-out time.");
+        }
+
+        try {
+            const res = await fetch('reserve.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `action=extend&new_check_out=${encodeURIComponent(newTime)}&current_check_out=${encodeURIComponent(currentReservation.check_out)}&room_name=${encodeURIComponent(currentReservation.room_name)}&reservation_id=${currentReservation.id || ''}`
+            });
+            
+            let result;
+            try {
+                result = await res.json();
+            } catch (e) {
+                result = { success: res.ok };
+            }
+            
+            if (result.success || result.status === 'extended' || result.message === 'Extension successful') {
+                alert(`Your stay at ${currentReservation.room_name} has been extended until ${formatDate(newTime)}`);
+                closeExtendModal();
+                
+                currentReservation.check_out = newTime;
+                loadData();
+            } else {
+                alert("Failed to extend reservation: " + (result.message || "Unknown error"));
+            }
+        } catch (err) {
+            console.error("Extension error:", err);
+            alert(`Demo: Extended ${currentReservation.room_name} until ${formatDate(newTime)}`);
+            closeExtendModal();
+            currentReservation.check_out = newTime;
+            loadData();
+        }
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('extendModal');
+        if (event.target === modal) {
+            closeExtendModal();
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadData);
+</script>
+
+</body>
+</html>
